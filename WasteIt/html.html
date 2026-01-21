@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WasteIt</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #f0f2f5; }
+        #camera-container { position: relative; display: inline-block; margin-top: 20px; border: 4px solid #333; border-radius: 10px; overflow: hidden; }
+        video { width: 100%; max-width: 350px; display: block; }
+        #result-box { margin-top: 20px; font-size: 1.5rem; font-weight: bold; color: #333; min-height: 50px; }
+        button { background: #007bff; color: white; border: none; padding: 15px 30px; font-size: 1rem; border-radius: 5px; cursor: pointer; margin-top: 15px; }
+        button:active { background: #0056b3; }
+        .organic { color: green; }
+        .plastic { color: purple; }
+        .paper { color: palevioletred; }
+        .glass { color: blue; }
+        .metal { color: gray; }
+        .inorganic { color: red; } 
+        .cardboard { color: peru; }
+        .battery { color: yellow }
+    </style>
+</head>
+<body>
+
+    <h1>Waste Classifier</h1>
+    
+    <div id="camera-container">
+        <video id="video" autoplay playsinline></video>
+    </div>
+    
+    <div id="result-box">Waiting for camera...</div>
+    
+    <button onclick="captureAndPredict()">Analize</button>
+    
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const resultBox = document.getElementById('result-box');
+
+        // 1. Encender la cámara
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(stream => { video.srcObject = stream; resultBox.innerText = "Available to scan"; })
+            .catch(err => { console.error("Camera error:", err); resultBox.innerText = "Camera could not be reached"; });
+
+        // 2. Función para capturar y enviar
+        function captureAndPredict() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('image', blob, 'capture.jpg');
+
+                resultBox.innerText = "Analizing...";
+
+                // 3. Enviar a python
+                fetch('http://127.0.0.1:4000/predict', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.error) {
+                        resultBox.innerText = "Error: " + data.error;
+                    } else {
+                        // 4. Mostrar resultado
+                        resultBox.innerHTML = `Detected as <span class="${data.class}">${data.class.toUpperCase()}</span> <br> <small>(${data.confidence})</small>`;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    resultBox.innerText = "Python error";
+                });
+            }, 'image/jpeg');
+        }
+    </script>
+</body>
+</html>
