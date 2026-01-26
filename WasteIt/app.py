@@ -4,16 +4,13 @@ import cv2
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from tensorflow.keras.models import load_model
-# Importamos esto SOLO para que load_model no falle al leer el archivo .h5
 from tensorflow.keras.applications.resnet_v2 import preprocess_input
 
 app = Flask(__name__)
 CORS(app)
 
-MODEL_PATH = 'model_waste.h5' # Asegúrate que el nombre del archivo sea correcto aquí
+MODEL_PATH = 'model_waste.h5' 
 IMG_SIZE = 224
-
-# Usamos la lista de clases EXACTAMENTE como la tienes en tu script que funciona
 CLASS_NAMES = [
     "cardboard",
     "metal",
@@ -27,8 +24,6 @@ CLASS_NAMES = [
 
 print("Cargando modelo... espera un momento...")
 try:
-    # Cargamos el modelo pasando 'preprocess_input' en custom_objects 
-    # para que Keras reconozca la capa interna, igual que en tu script.
     model = load_model(MODEL_PATH, custom_objects={'preprocess_input': preprocess_input})
     print("¡Modelo listo!")
 except Exception as e:
@@ -38,11 +33,11 @@ def prepare_image(file_stream):
     """
     Replica EXACTAMENTE la función load_and_preprocess_image de tu script funcional.
     """
-    # 1. Leer imagen desde la memoria (equivalente a cv.imread)
+    # 1. Read image
     file_bytes = np.frombuffer(file_stream.read(), np.uint8)
     img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
     
-    # 2. Resize + Padding (Tu lógica exacta de square_resize_image)
+    # 2. Resize + Padding 
     h, w = img.shape[:2]
     top, bottom, left, right = 0, 0, 0, 0
     if w >= h:
@@ -57,14 +52,9 @@ def prepare_image(file_stream):
     
     img = cv2.resize(img, (IMG_SIZE, IMG_SIZE), interpolation=cv2.INTER_AREA)
 
-    # 3. Convertir a RGB (OpenCV carga en BGR)
+    # 3. BGR -> RGB 
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-    # 4. NO ESCALAMOS MANUALMENTE (La clave del éxito)
-    # Solo convertimos a float32 manteniendo valores 0-255
     img = img.astype('float32')
-
-    # 5. Expandir dimensiones
     return np.expand_dims(img, axis=0)
 
 @app.route('/predict', methods=['POST'])
@@ -75,16 +65,12 @@ def predict():
     file = request.files['image']
     
     try:
-        # Procesar imagen
         processed_img = prepare_image(file)
-        
-        # Predecir
         predictions = model.predict(processed_img, verbose=0)
-        
         class_idx = np.argmax(predictions[0])
         confidence = float(np.max(predictions[0]) * 100)
         
-        # Obtener nombre de la clase
+        # Name x Index
         if class_idx < len(CLASS_NAMES):
             result = CLASS_NAMES[class_idx]
         else:
