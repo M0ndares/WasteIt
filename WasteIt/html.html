@@ -23,7 +23,7 @@
 </head>
 <body>
 
-    <h1>Waste Classifier</h1>
+    <h1>WasteIt</h1>
     
     <div id="camera-container">
         <video id="video" autoplay playsinline></video>
@@ -57,7 +57,7 @@
                 resultBox.innerText = "Analizing...";
 
                 // 3. Enviar a python
-                fetch('http://127.0.0.1:4000/predict', {
+                fetch('https://wasteit.onrender.com/predict', {
                     method: 'POST',
                     body: formData
                 })
