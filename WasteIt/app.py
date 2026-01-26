@@ -3,12 +3,16 @@ import numpy as np
 import cv2
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from tensorflow.keras.models import load_model
-from tensorflow.keras.applications.resnet_v2 import preprocess_input
+import keras  
+from keras.models import load_model
+from keras.applications.resnet_v2 import preprocess_input
+import tensorflow as tf
 
 app = Flask(__name__)
 CORS(app)
 
+print(f"TENSORFLOW: {tf.__version__}")
+print(f"KERAS: {keras.__version__}")
 IMG_SIZE = 224
 CLASS_NAMES = [
     "cardboard", "metal", "inorganic", "plastic", 
