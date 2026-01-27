@@ -9,27 +9,25 @@
         #camera-container { position: relative; display: inline-block; margin-top: 20px; border: 4px solid #333; border-radius: 10px; overflow: hidden; }
         video { width: 100%; max-width: 350px; display: block; }
         #result-box { margin-top: 20px; font-size: 1.5rem; font-weight: bold; color: #333; min-height: 50px; }
-        button { background: #007bff; color: white; border: none; padding: 15px 30px; font-size: 1rem; border-radius: 5px; cursor: pointer; margin-top: 15px; }
-        button:active { background: #0056b3; }
+        button { color: #ff751f; background-color: #f0f2f5; width: 50%; border: none; padding: 15px 30px; font-size: 2rem; border-radius: 5px; cursor: pointer; margin-top: 15px; }
         .organic { color: green; }
-        .plastic { color: purple; }
-        .paper { color: palevioletred; }
+        .plastic { color: rebeccapurple; }
+        .paper { color: darkmagenta; }
         .glass { color: blue; }
-        .metal { color: gray; }
+        .metal { color: darkolivegreen; }
         .inorganic { color: red; } 
-        .cardboard { color: peru; }
-        .battery { color: yellow }
+        .cardboard { color: aqua; }
+        .battery { color: darkcyan}
     </style>
 </head>
-<body>
-
-    <h1>WasteIt</h1>
+<body style="background-color: #ff751f;">
+    <img src="wasteIt.png"; style= "max-height: 34%; max-width: 30%;">
     
-    <div id="camera-container">
+    <div id="camera-container" style="border-color: #f0f2f5;">
         <video id="video" autoplay playsinline></video>
     </div>
     
-    <div id="result-box">Waiting for camera...</div>
+    <div id="result-box" style="color: #f0f2f5;">Waiting for camera...</div>
     
     <button onclick="captureAndPredict()">Analize</button>
     
@@ -40,12 +38,12 @@
         const canvas = document.getElementById('canvas');
         const resultBox = document.getElementById('result-box');
 
-        // 1. Encender la cámara
+        // 1. Camera
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
             .then(stream => { video.srcObject = stream; resultBox.innerText = "Available to scan"; })
             .catch(err => { console.error("Camera error:", err); resultBox.innerText = "Camera could not be reached"; });
 
-        // 2. Función para capturar y enviar
+        // 2. Photo
         function captureAndPredict() {
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
@@ -56,7 +54,7 @@
 
                 resultBox.innerText = "Analizing...";
 
-                // 3. Enviar a python
+                // 3. Delivering
                 fetch('https://wasteit.onrender.com/predict', {
                     method: 'POST',
                     body: formData
@@ -66,7 +64,7 @@
                     if(data.error) {
                         resultBox.innerText = "Error: " + data.error;
                     } else {
-                        // 4. Mostrar resultado
+                        // 4. Result
                         resultBox.innerHTML = `Detected as <span class="${data.class}">${data.class.toUpperCase()}</span> <br> <small>(${data.confidence})</small>`;
                     }
                 })
