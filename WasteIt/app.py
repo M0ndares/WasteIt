@@ -17,7 +17,7 @@ CORS(app)
 IMG_SIZE = 224
 CLASS_NAMES = [
     "cardboard", "metal", "inorganic", "plastic", 
-    "paper", "glass", "organic"
+    "paper", "glass", "organic", "battery"
 ]
 
 model = None
