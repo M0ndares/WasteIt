@@ -25,7 +25,7 @@ load_error = None
 
 try:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    MODEL_PATH = os.path.join(BASE_DIR, 'model_waste.h5')
+    MODEL_PATH = os.path.join(BASE_DIR, 'model.h5')
     custom_dict = {
         'preprocess_input': custom_preprocess,
         'function': custom_preprocess

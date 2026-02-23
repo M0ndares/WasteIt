@@ -6,8 +6,7 @@
     "plastic",
     "paper",
     "glass",
-    "organic",
-    "battery"
+    "organic"
   ],
   "image_size": 224,
   "stretch": false,

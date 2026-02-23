@@ -13,7 +13,7 @@ import shutil
 # TRAINING SETTINGS
 ########################################################################################################################
 
-experiment_no = 7
+experiment_no = 3
 
 batch_size = 16
 
@@ -66,7 +66,7 @@ balance_dataset = True #False
 
 # train (T) 80%, val (V) 10%, test (S) 10%
 subset_distribution = [{'filter': [], 'distribution': ['T', 'T', 'T', 'T', 'V', 'S', 'T', 'T', 'T', 'T']}]
-data_sub_folder = 'train80-val10-test10_waste-dataset'
+data_sub_folder = 'train80-val10-test10'
 
 #-----------------------------------------------------------------------------------------------------------------------
 # DATASET BALANCE EXPERIMENTS
@@ -281,7 +281,7 @@ architecture = 'ResNet50V2'
 root_folder = r'/home/osvalml/oemv_2026/main'
 
 data_folder = os.path.join(root_folder, 'data')
-original_data_folder = os.path.join(data_folder, 'images/waste_dataset')
+original_data_folder = os.path.join(data_folder, 'images/selected_images')
 
 if data_sub_folder != '':
     data_folder = os.path.join(root_folder, 'data', 'data_' + data_sub_folder)
