@@ -67,7 +67,7 @@
                 formData.append('image', blob, 'capture.jpg');
 
                 // Delivering
-                fetch('https://wasteit.onrender.com/predict', {
+                fetch('https://wasteit-production.up.railway.app/predict', {
                     method: 'POST',
                     body: formData
                 })
