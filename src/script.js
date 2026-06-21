@@ -34,17 +34,21 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } }).then(stre
     resultBox.innerText = ""; 
     let innterInterval = interval;
     setInterval(() => {
-        if (innterInterval >= 1000) {
-            timer.innerHTML =`La próxima captura será tomada dentro de ${innterInterval/1000} segundos`;
-            innterInterval -= 1000;
-        } else {
-            timer.innerHTML = 'Prediciendo...';
-            captureAndPredict(); 
-            innterInterval = interval;
+    // 1. Si está pausado, detenemos el reloj y NO mandamos fotos
+    if (isPaused) {
+        timer.innerHTML = 'Procesamiento en pausa';
+        return; // <-- Bloquea todo lo que está abajo
+    }
+
+    // 2. Si no está pausado, corre el flujo normal
+    if (innterInterval >= 1000) {
+        timer.innerHTML = `La próxima captura será tomada dentro de ${innterInterval/1000} segundos`;
+        innterInterval -= 1000;
+    } else {
+        timer.innerHTML = 'Prediciendo...';
+        captureAndPredict(); 
+        innterInterval = interval;
         }
-        if(isPaused) {
-            timer.innerHTML = 'Procesamiento en pausa' 
-        }  
     }, 1000);
 })
     .catch(err => { 
