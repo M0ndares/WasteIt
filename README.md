@@ -21,7 +21,7 @@ Full-Stack Computer Vision web application designed to detect and classify 8 dif
 This project implements an optimized and lightweight Full-Stack pipeline:
 1. **Frontend:** Captures periodic video frames every 3 seconds via an HTML5 Canvas API and transmits them asynchronously to the backend.
 2. **Backend:** Re-centers and squares the incoming image by dynamically injecting black borders via OpenCV to avoid aspect-ratio distortion.
-3. **Inference:** Feeds the padded image into a custom-trained **EfficientNet2** model running under a thread-safe environment to output the material class and prediction confidence.
+3. **Inference:** Feeds the padded image into a custom-trained **ResNetV2** model running under a thread-safe environment to output the material class and prediction confidence.
 
 ---
 
@@ -36,7 +36,7 @@ This project implements an optimized and lightweight Full-Stack pipeline:
 ### Tech Stack
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript
 - **Backend API:** Python 3.12, Flask, Flask-CORS
-- **Deep Learning Engine:** TensorFlow, EfficientNet2
+- **Deep Learning Engine:** TensorFlow, ResNetV2
 - **Image Processing:** OpenCV, NumPy
 
 ---
