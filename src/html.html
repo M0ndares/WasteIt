@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpg" href="">
+    <meta name="theme-color" content="#ff751f">
+    <title>WasteIt</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background-color: #ff751f;">
+    <div id="anuncio">
+        <h1>WasteIt: Garbage classifier</h1>
+        <img id="gestos" src="introduction.jpg"> 
+        <p>Dactimex es capaz de clasificar los 29 gestos mostrados en la imagen superior haciendo uso de 
+            tu webcam. Asegúrate de mostrar claramente tu mano. -Osval Valladares
+        </p>
+        <button id="continuar" class="buttons">CONTINUAR</button>
+    </div>
+    <div id="daWholeThing">
+        <h3 id="timer"></h3>
+        <div id="camera-container">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+        </div>
+        <div id="result-box">Esperando cámara...</div>
+        <div id="confidence-box"></div>
+        <br>
+        <button id="pause-button" onclick="clicked(true)" class="buttons">⏸️</button>
+        <button id="reset-button" onclick="clicked(false)" class="buttons"">🔄</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
