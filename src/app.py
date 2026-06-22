@@ -3,14 +3,9 @@ import numpy as np
 import cv2
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import keras
-from keras.models import load_model
-from keras.applications.resnet_v2 import preprocess_input  
 import threading
-
-@keras.saving.register_keras_serializable()
-def custom_preprocess(x):
-    return preprocess_input(x)
+import gc  # Mantenemos el recolector para asegurar que Render libere RAM inmediatamente
+from tensorflow.lite.python.interpreter import Interpreter as tflite
 
 app = Flask(__name__)
 CORS(app)
@@ -21,20 +16,24 @@ CLASS_NAMES = [
     "paper", "glass", "organic", "battery"
 ]
 
-model = None
+# Inicialización de variables para TF Lite
+interpreter = None
+input_details = None
+output_details = None
 load_error = None
 lock = threading.Lock()
 
 try:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    MODEL_PATH = os.path.join(BASE_DIR, 'model.h5')
+    MODEL_PATH = os.path.join(BASE_DIR, 'model.tflite')  # <-- Apuntamos al nuevo archivo
     
-    custom_dict = {
-        'preprocess_input': custom_preprocess,
-        'function': custom_preprocess
-    }
+    # Cargar el motor ultraligero de TF Lite
+    interpreter = tflite(model_path=MODEL_PATH)
+    interpreter.allocate_tensors()
     
-    model = load_model(MODEL_PATH, custom_objects=custom_dict, compile=False)
+    # Guardar las referencias de los túneles de entrada y salida de datos
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
 
 except Exception as e:
     load_error = str(e)
@@ -59,15 +58,14 @@ def prepare_image(file_stream):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = img.astype('float32')
     
-    # NOTA: Aquí NO llamamos a custom_preprocess(img). 
-    # Mantenemos los datos en el rango original (0-255) para no romper la precisión.
-    
+    # Importante: Como la normalización de ResNet ya se grabó dentro del .tflite,
+    # solo pasamos la matriz limpia (0-255).
     return np.expand_dims(img, axis=0)
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    if model is None:
-        return jsonify({'error': 'Model could not be loaded.', 'Details': load_error}), 500
+    if interpreter sleep or interpreter is None:
+        return jsonify({'error': 'TF Lite Interpreter could not be loaded.', 'Details': load_error}), 500
 
     if 'image' not in request.files:
         return jsonify({'error': 'No image sent'}), 400
@@ -78,8 +76,16 @@ def predict():
     try:
         processed_img = prepare_image(file)
         
+        # Flujo de ejecución seguro con hilos (Threading Lock) para TF Lite
         with lock:
-            predictions = model.predict(processed_img, verbose=0)
+            # 1. Colocar la imagen en la ranura de entrada del intérprete
+            interpreter.set_tensor(input_details[0]['index'], processed_img)
+            
+            # 2. Ejecutar la predicción matemática express
+            interpreter.invoke()
+            
+            # 3. Extraer el resultado desde la ranura de salida
+            predictions = interpreter.get_tensor(output_details[0]['index'])
             
         class_idx = np.argmax(predictions[0])
         confidence = float(np.max(predictions[0]) * 100)
@@ -91,10 +97,11 @@ def predict():
             'confidence': f"{confidence:.2f}%"
         })
     except Exception as e:
-        return jsonify({'error': f"Error: {str(e)}"}), 500
+        return jsonify({'error': f"Error durante la inferencia: {str(e)}"}), 500
     finally:
         if processed_img is not None:
             del processed_img
+        gc.collect() # Obligamos a limpiar cualquier residuo en la RAM de Render
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))

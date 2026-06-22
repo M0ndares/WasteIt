@@ -2,7 +2,7 @@
 
 Full-Stack Computer Vision web application designed to detect and classify 8 different types of waste materials in real-time to promote proper recycling.
 
-![WasteIt Project Demo](src/introduction.jpg)
+![WasteIt Project Demo](wasteItReadme.gif)
 
 **WasteIt** relies on a Deep Learning model to analyze camera frames and automatically categorize waste items into specific recycling groups.
 
