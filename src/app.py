@@ -64,7 +64,7 @@ def prepare_image(file_stream):
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    if interpreter sleep or interpreter is None:
+    if interpreter is None:
         return jsonify({'error': 'TF Lite Interpreter could not be loaded.', 'Details': load_error}), 500
 
     if 'image' not in request.files:
