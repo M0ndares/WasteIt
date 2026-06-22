@@ -13,7 +13,6 @@ CORS(app)
 
 IMG_SIZE = 224
 
-# NOTA: Mantén exactamente el mismo orden de clases con el que fue entrenado el modelo
 CLASS_NAMES = [
     "cardboard", "metal", "inorganic", "plastic", 
     "paper", "glass", "organic", "battery"
@@ -25,8 +24,7 @@ lock = threading.Lock() # Candado para asegurar la predicción segura entre hilo
 
 try:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    # CORRECCIÓN 1: Usa el nombre del modelo original que sí funcionaba
-    MODEL_PATH = os.path.join(BASE_DIR, 'model_waste.h5') 
+    MODEL_PATH = os.path.join(BASE_DIR, 'model.h5') 
     
     # Se remueve el custom_preprocess de la carga si el modelo original no lo usaba
     model = load_model(MODEL_PATH, compile=False)
