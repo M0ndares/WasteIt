@@ -36,7 +36,7 @@ This project implements an optimized and lightweight Full-Stack pipeline:
 ### Tech Stack
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript
 - **Backend API:** Python 3.12, Flask, Flask-CORS
-- **Deep Learning Engine:** TensorFlow, ResNetV2
+- **Deep Learning Engine:** TensorFlow, ResNet50V2
 - **Image Processing:** OpenCV, NumPy
 
 ---
