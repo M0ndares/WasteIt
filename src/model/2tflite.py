@@ -1,5 +1,5 @@
 import tensorflow as tf
-import keras  
+import keras
 from keras.applications.resnet_v2 import preprocess_input
 
 @keras.saving.register_keras_serializable()
